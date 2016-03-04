@@ -1,0 +1,5 @@
+Commands:
+    new         Initialize a new microservice application
+    generate    Generate a new component and adds it to the current project
+
+See `carbonara <command> --help` for more details on specific command.
