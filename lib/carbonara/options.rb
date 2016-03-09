@@ -1,31 +1,33 @@
 require 'configatron'
-require 'carbonara/commands/new_command'
-require 'carbonara/commands/generate_command'
+require "carbonara/command"
+require 'carbonara/command/new'
+require 'carbonara/command/add'
 
 Options = configatron
+Options.path = Dir.pwd
 
-commands = [Carbonara::NewCommand, Carbonara::GenerateCommand]
+commands = [Carbonara::Command::New, Carbonara::Command::Add]
 max_len  = commands.max_by{|c| c.command_name.length }.command_name.length
 
 # parse options and commands
 global = OptionParser.new do |opts|
   opts.banner = <<-EOF
-#{"USAGE".bright}
+USAGE
     #{"carbonara".bright} #{"[options]".color(:white)} #{"command".underline.bright} #{"[command-options]".color(:white)}
 EOF
 
-  opts.separator "\nOPTIONS".bright
+  opts.separator "\nOPTIONS"
   opts.on('-h', '--help', 'Show this help message') do
     puts opts.help
     exit
   end
 
-  opts.separator "\nCOMMANDS".bright
+  opts.separator "\nCOMMANDS"
   commands.each do |c|
     opts.separator("    " + c.command_name.ljust(max_len + 4).color(:blue) + c.summary)
   end
 
-  opts.separator "\nNOTE".bright
+  opts.separator "\nNOTES"
   opts.separator <<-EOF
     See `#{"carbonara".bright} #{"command".underline.bright} --help` for more details about the specific command.
 
@@ -43,9 +45,7 @@ end
 Options.command = ARGV.shift
 
 if commands.map(&:command_name).include?(Options.command)
-  puts "Command: #{Options.command}"
   command = commands.detect{|c| c.command_name == Options.command }.new
-  command.order!
 else
   message = "\n"
   if Options.command.nil?
